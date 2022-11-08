@@ -80,7 +80,6 @@ class LAMP(Thermodynamics):
             # Check first and last nucleotides for calculation dynamic %GC
             self._check_gc(seq[ind], seq[ind + self._lengths_primers[0] - 1])
 
-
     def get_complementary_seq(self, seq: Seq.Seq) -> str:
         """
         Building a complementary DNA
@@ -90,7 +89,6 @@ class LAMP(Thermodynamics):
         :return: complementary DNA sequence (str)
         """
         return str(seq.complement())
-
 
     def start_design_primers(self, record: SeqRecord) -> list: #, seq_length: list[int, str]) -> list:
         """
@@ -129,14 +127,13 @@ class LAMP(Thermodynamics):
         sets_primers = design.search_sets(self._primers, self._compl_primers)
 
         # Sort primer sets
-        # sets_primers = self.sort_primer_sets(sets_primers)
-
-        print(sets_primers)
+        sets_primers = self.sort_primer_sets(sets_primers)
 
         for primer_set in sets_primers:
             print(primer_set, design.design_loop_primers(primer_set, 
                                         self._primers,
                                         self._compl_primers), '\n')
+        
 
         # Return primer sets
         return sets_primers

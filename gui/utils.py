@@ -101,13 +101,15 @@ def primer_sets_table(primer_set: list[list]) -> str:
 
     :return: html table with primers    
     """
+    cur_ids, cur_colors = get_colors_and_ids(primer_set)
+
     primer_set_html = ''
 
     # Write primer info to row
     for index, primer in enumerate(primer_set):
         primer_set_html += (
             '<tr>'
-                f'<td style="text-align: center;background-color: {colors[index]};">{ids[index]}</td>'
+                f'<td style="text-align: center;background-color: {cur_colors[index]};">{cur_ids[index]}</td>'
                 f'<td width="{len(primer[0]) * 12}" style="font-family: Courier,Courier New,Monaco,monospace;">{str(primer[0]).upper()}</td>'
                 f'<td style="text-align: center;">{primer[1][2]}</td>'
                 f'<td style="text-align: center;">{primer[1][2] + primer[1][3] - 1}</td>'
@@ -119,7 +121,7 @@ def primer_sets_table(primer_set: list[list]) -> str:
 
     # Build FIP and BIP
     fip = primer_set[2][0] + ' ' + primer_set[1][0]
-    bip = primer_set[2][0] + ' ' + primer_set[1][0]
+    bip = primer_set[4][0] + ' ' + primer_set[3][0]
 
     # Add BIP anf FIP to table
     primer_set_html += (
@@ -166,6 +168,7 @@ def get_sequences(primer_set: list[list]) -> str:
 
     :return: html window with sequences and primers
     """
+    _, cur_colors = get_colors_and_ids(primer_set)
     # # Sort primers set by index for correct insert
     # primer_set.sort(key=lambda param: param[1][2])
 
@@ -205,7 +208,7 @@ def get_sequences(primer_set: list[list]) -> str:
 
             for j in range(10):
                 if cur_nucl_ind == primer_set[cur_primer_ind][1][3]:
-                    html_td += f"""<span style="background-color: {colors[cur_primer_ind]};">{cur_nucl_string}</span>"""
+                    html_td += f"""<span style="background-color: {cur_colors[cur_primer_ind]};">{cur_nucl_string}</span>"""
 
                     cur_nucl_ind = 0
                     cur_primer_ind += 1
@@ -231,7 +234,7 @@ def get_sequences(primer_set: list[list]) -> str:
                     html_td += f"""<span>{'&nbsp;' * space_counts}</span>"""
 
                 if cur_nucl_ind > 0:
-                    html_td += f"""<span style="background-color: {colors[cur_primer_ind]};">{cur_nucl_string}</span>"""
+                    html_td += f"""<span style="background-color: {cur_colors[cur_primer_ind]};">{cur_nucl_string}</span>"""
 
                 primers += f"""<td><p style="font-family: Courier,Courier New,Monaco,monospace; font-style: normal; font-size: 12pt;">{html_td}</p></td>"""            
             else:

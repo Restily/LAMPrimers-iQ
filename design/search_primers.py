@@ -4,7 +4,6 @@ primers = [primer, [%GC, Tm, ind, primer_length]]
 primer_set = [F3, F2, F1c, B1c, B2, B3]
 """
 import itertools
-from turtle import right
 
 from lamp.dimers import Dimers
 from lamp.thermodynamics import Temperature
@@ -246,7 +245,7 @@ class Design:
             left_distance = DesignConfig.BF_B2
             right_distance = DesignConfig.B2_B1C
                 
-         # Check max primers distance
+        # Check max primers distance
         if right_primers_distance < right_distance[0]:
             return 0
 
@@ -262,15 +261,16 @@ class Design:
             if primer[-1][0] == cur_primer[0]:
                 return 1
 
+            print(cur_primer)
             # Checking for diffrence lengths
             if abs(primer[1][3] - cur_primer[1][3]) > DesignConfig.MAX_DIFFRENCE_LENGTHS_PRIMERS:
                 return 1
 
         # Check temperature diffrence of primers
         if Temperature.check_temperature_diffrence(primer_set, cur_primer):
-
             # Check dimers of primers
             if not Dimers.check_primers_dimers(primer_set, cur_primer[0]):
+                print('OK')
                 return 2
     
         return 1
@@ -340,7 +340,7 @@ class Design:
         loop_primer_sets = []
 
         for set_ind in range(len(primer_sets)):
-            loop_primers = self._search_loop_primers_ps(primer_sets[set_ind],
+            loop_primers = self._search_loop_primers_ps(primer_sets,
                                                         primers,
                                                         compl_primers)
 
@@ -364,6 +364,7 @@ class Design:
     # def design_hybridization_probe(self,
     #                                primer_set: list[list],
     #                                sequence: str):
+    #     Смотреть на 5'-3' и 3'-5'
     #     F1c_end_ind = primer_set[2][1][2] + primer_set[2][1][3] - 1
     #     B1c_start_ind = primer_set[3][1][2]
 

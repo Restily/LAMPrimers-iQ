@@ -476,7 +476,9 @@ class MainWindow(QtWidgets.QMainWindow):
         
             self.changed = True
 
-            seq = seq.replace('\r', '').replace('\n', '').upper()
+            seq = seq.replace('\r', '').replace('\n', '').replace(
+                ' ', '').replace('\t', '').upper()
+            seq = ''.join(filter(lambda x: not x.isdigit(), seq))
             self.paste_field.setPlainText(seq)
 
             # self.paste_field.moveCursor(QTextCursor.MoveOperation.End)
