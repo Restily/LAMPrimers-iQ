@@ -72,7 +72,7 @@ class Temperature:
         for ind in range(len(primer_sets)):
             primer_sets[ind].append(sum(
                 [primer_sets[ind][k][1][1] for k in range(len(primer_sets[ind]))]
-            ) / primer_sets[ind])
+            ) / len(primer_sets[ind]))
 
         # Sort by average temperature
         primer_sets.sort(key=lambda x: x[-1])
