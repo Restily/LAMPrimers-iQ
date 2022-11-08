@@ -305,6 +305,14 @@ def save_to_excel(primers_sets: list[list], file_path: str) -> bool:
                 for param_ind, primer_param in enumerate(params):
                     sheet.cell(row=cur_count_set + ind + 1, column=param_ind + 2).value = primer_param
 
+            fip = primer_set[2][0] + ' ' + primer_set[1][0]
+            bip = primer_set[4][0] + ' ' + primer_set[3][0]
+
+            sheet.cell(row=cur_count_set + 8, column=1).value = 'FIP'
+            sheet.cell(row=cur_count_set + 8, column=2).value = fip
+            sheet.cell(row=cur_count_set + 9, column=1).value = 'BIP'
+            sheet.cell(row=cur_count_set + 9, column=2).value = bip
+
         wb.save(file_path)
 
     except Exception as e:
