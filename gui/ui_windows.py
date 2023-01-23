@@ -370,7 +370,10 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.open_layout_open:
             self.search_record = self.selected_record
         elif self.paste_sequence_open:
-            self.search_record = SeqRecord.SeqRecord(seq=Seq.Seq(self.paste_field.toPlainText()))
+            self.search_record = SeqRecord.SeqRecord(
+                seq=Seq.Seq(self.paste_field.toPlainText()),
+                id='LAMPrimers-IQ'
+            )
 
         # self.setup_loading_bar()
 
