@@ -130,6 +130,8 @@ class LAMP(Thermodynamics):
         # Create design class for primer sets
         design = Design()
 
+        print(len(self._primers))
+
         # Get primer sets
         sets_primers = design.search_sets(self._primers, self._compl_primers)
 

@@ -116,7 +116,6 @@ class Design:
         # Starting seatching sets
         # Step 0 - F3
         for F3_ind in range(F3_next_ind, len_main_primers):
-            print(F3_ind, len_main_primers)
             unique = True
 
             # Add F3 primer
