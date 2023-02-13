@@ -2,7 +2,8 @@
 # primers = [primer, [%GC, Tm, ind, primer_length]]
 import math
 
-from lamp.config import LAMPConfig
+from config.finder import *
+from lamp.struct import Primer, PrimersSet
 
 
 class Temperature:
@@ -11,7 +12,7 @@ class Temperature:
     """
     def __init__(self):
         # Get ranges for params from config
-        self._TM_RANGE = LAMPConfig.TM_RANGE
+        self._TM_RANGE = TM_RANGE
 
 
     def calc_tm(self, primer_length: int, gc_count: int) -> float:
@@ -22,11 +23,11 @@ class Temperature:
         
         :return: Tm = 81.5 + 16.6(log10([Na+])) + 0.41(%GC) - 575 / primer length
         """
-        return round(81.5 + 16.6 * math.log10(LAMPConfig.NA_PLUS) + 0.41 * gc_count - 575 / primer_length, 2)
+        return round(81.5 + 16.6 * math.log10(NA_PLUS) + 0.41 * gc_count - 575 / primer_length, 2)
 
 
     @staticmethod
-    def check_temperature_diffrence(primers: list, cur_primer: list) -> bool:
+    def check_temperature_diffrence(primers: PrimersSet, cur_primer: Primer) -> bool:
         """
         Checking that all temperatures from the set doesnt differ more than const value
 
@@ -36,7 +37,7 @@ class Temperature:
         :return: True, if diffrenece < 1, else False
         """
         for primer in primers:
-            if abs(primer[1][1] - cur_primer[1][1]) > LAMPConfig.TM_MIN_VALUE:
+            if abs(primer.Tm - cur_primer.Tm) > TM_MIN_VALUE:
                 return False
 
         return True
@@ -44,7 +45,6 @@ class Temperature:
 
     @staticmethod
     def check_temperature_diffrence_probe(primers: list, probe: list) -> bool:
-        # Переделать
         """
         Checking that all temperatures from the set doesnt differ more than const value
 
@@ -54,7 +54,7 @@ class Temperature:
         :return: True, if diffrenece < 1, else False
         """
         for primer in primers:
-            if abs(primer[1][1] - probe[1][1]) < LAMPConfig.TM_PROBE_MAX_VALUE:
+            if abs(primer.Tm - probe.Tm) < TM_PROBE_MAX_VALUE:
                 return False
 
         return True
@@ -86,7 +86,7 @@ class GC:
     """
     def __init__(self):
         # Get ranges for params from config
-        self._GC_RANGE = LAMPConfig.GC_RANGE
+        self._GC_RANGE = GC_RANGE
         
         # Vars for dynamic calculating %GC
         self._gc_count = 0

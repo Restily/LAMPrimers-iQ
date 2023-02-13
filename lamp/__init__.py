@@ -1,0 +1,1 @@
+from .mainclass import LAMP

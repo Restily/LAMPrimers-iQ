@@ -7,9 +7,9 @@ from gui.ui_py.params import Ui_Params
 from gui.ui_py.ui import Ui_MainWindow
 from gui.ui_py.results import Ui_Results
 
-from design.config import DesignConfig
-from lamp.config import LAMPConfig
-from lamp.start_lamp import LAMP
+from config.finder import *
+from config.sorting import *
+from lamp import LAMP
 
 from gui.utils import *
 
@@ -51,93 +51,93 @@ class ParamsWindow(QtWidgets.QWidget):
 
     def set_config_params(self):
         self.params_ui.f3_f2_spin_1.setValue(
-            DesignConfig.F3_F2[0]
+            F3_F2[0]
         )
         self.params_ui.f3_f2_spin_2.setValue(
-            DesignConfig.F3_F2[1]
+            F3_F2[1]
         )
 
         self.params_ui.f2_f1c_spin_1.setValue(
-            DesignConfig.F2_F1C[0]
+            F2_F1C[0]
         )
         self.params_ui.f2_f1c_spin_2.setValue(
-            DesignConfig.F2_F1C[1]
+            F2_F1C[1]
         )
 
         self.params_ui.f1c_b1c_spin_1.setValue(
-            DesignConfig.F1C_B1C[0]
+            F1C_B1C[0]
         )
         self.params_ui.f1c_b1c_spin_2.setValue(
-            DesignConfig.F1C_B1C[1]
+            F1C_B1C[1]
         )
 
         self.params_ui.b2_b1c_spin_1.setValue(
-            DesignConfig.B2_B1C[0]
+            B2_B1C[0]
         )
         self.params_ui.b2_b1c_spin_2.setValue(
-            DesignConfig.B2_B1C[1]
+            B2_B1C[1]
         )
 
         self.params_ui.b3_b2_spin_1.setValue(
-            DesignConfig.B3_B2[0]
+            B3_B2[0]
         )
         self.params_ui.b3_b2_spin_2.setValue(
-            DesignConfig.B3_B2[1]
+            B3_B2[1]
         )
 
         self.params_ui.amplicon_spin_1.setMaximum(500)
         self.params_ui.amplicon_spin_2.setMaximum(500)
 
         self.params_ui.amplicon_spin_1.setValue(
-            DesignConfig.MIN_LENGTH_AMPLICON
+            MIN_LENGTH_AMPLICON
         )
         self.params_ui.amplicon_spin_2.setValue(
-            DesignConfig.MAX_LENGTH_AMPLICON
+            MAX_LENGTH_AMPLICON
         )
         self.params_ui.delta_length_spin.setValue(
-            DesignConfig.MAX_DIFFRENCE_LENGTHS_PRIMERS
+            MAX_DIFFRENCE_LENGTHS_PRIMERS
         )
 
         self.params_ui.na_plus_spin.setValue(
-            LAMPConfig.NA_PLUS
+            NA_PLUS
         )
         self.params_ui.delta_tm_spin.setValue(
-            LAMPConfig.TM_MIN_VALUE
+            TM_MIN_VALUE
         )
 
 
     def save_changes(self):
-        DesignConfig.F3_F2 = [
+        F3_F2 = [
             self.params_ui.f3_f2_spin_1.value(),
             self.params_ui.f3_f2_spin_2.value()
         ]
 
-        DesignConfig.F2_F1C = [
+        F2_F1C = [
             self.params_ui.f2_f1c_spin_1.value(),
             self.params_ui.f2_f1c_spin_2.value()
         ]
 
-        DesignConfig.F1C_B1C = [
+        F1C_B1C = [
             self.params_ui.f1c_b1c_spin_1.value(),
             self.params_ui.f1c_b1c_spin_2.value()
         ]
 
-        DesignConfig.B2_B1C = [
+        B2_B1C = [
             self.params_ui.b2_b1c_spin_1.value(),
             self.params_ui.b2_b1c_spin_2.value()
         ]
 
-        DesignConfig.B3_B2 = [
+        B3_B2 = [
             self.params_ui.b3_b2_spin_1.value(),
             self.params_ui.b3_b2_spin_2.value()
         ]
 
-        DesignConfig.MIN_LENGTH_AMPLICON = self.params_ui.amplicon_spin_1.value()
-        DesignConfig.MAX_LENGTH_AMPLICON = self.params_ui.amplicon_spin_2.value()
-        DesignConfig.MAX_DIFFRENCE_LENGTHS_PRIMERS = self.params_ui.delta_length_spin.value()
+        MIN_LENGTH_AMPLICON = self.params_ui.amplicon_spin_1.value()
+        MAX_LENGTH_AMPLICON = self.params_ui.amplicon_spin_2.value()
+        MAX_DIFFRENCE_LENGTHS_PRIMERS = self.params_ui.delta_length_spin.value()
 
-        LAMPConfig.NA_PLUS = self.params_ui.na_plus_spin.value()
-        LAMPConfig.TM_MIN_VALUE = self.params_ui.delta_tm_spin.value()
+        NA_PLUS = self.params_ui.na_plus_spin.value()
+        TM_MIN_VALUE = self.params_ui.delta_tm_spin.value()
 
         self.close()
 
@@ -338,19 +338,19 @@ class MainWindow(QtWidgets.QMainWindow):
         Set values for design primers
         """
         # GC values
-        LAMPConfig.GC_RANGE = [
+        GC_RANGE = [
             self.ui.gc_spin_1.value(),
             self.ui.gc_spin_2.value()
         ]
 
         # Tm values
-        LAMPConfig.TM_RANGE = [
+        TM_RANGE = [
             self.ui.tm_spin_1.value(),
             self.ui.tm_spin_2.value()
         ]
 
         # Length values
-        LAMPConfig.PRIMERS_LENGTH_RANGE = [
+        PRIMERS_LENGTH_RANGE = [
             self.ui.length_spin_1.value(),
             self.ui.length_spin_2.value()
         ]
@@ -381,7 +381,7 @@ class MainWindow(QtWidgets.QMainWindow):
         lamp = LAMP()
 
         # Start design primers in LAMP class
-        self.primer_sets = lamp.start_design_primers(self.search_record)
+        self.primer_sets = lamp.design_primers(self.search_record)
 
         # Checking if primers have been found
         if len(self.primer_sets) == 0:
