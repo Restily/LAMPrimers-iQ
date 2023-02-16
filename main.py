@@ -1,11 +1,14 @@
-import sys
+# import sys
 
-from PyQt6 import QtWidgets
-from gui.ui_windows import MainWindow
+# from PyQt6 import QtWidgets
+# from gui.ui_windows import MainWindow
 
-app = QtWidgets.QApplication([])
-application = MainWindow()
+# app = QtWidgets.QApplication([])
+# application = MainWindow()
 
-application.show()
+# application.show()
  
-sys.exit(app.exec())
+# sys.exit(app.exec())
+from tests import start
+
+start.start_tests()

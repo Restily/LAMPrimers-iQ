@@ -4,7 +4,6 @@ Main file for design primers
 from Bio import Seq, SeqRecord
 
 from lamp.struct import Primer
-from ..sorting.search import Sorting
 from config.finder import *
 
 from lamp.thermodynamics.dimers import Dimers
@@ -40,25 +39,27 @@ class PrimerFinder(Thermodynamics):
         """
 
         # Work with first primer
-        primer = seq[seq_length[0]:seq_length[0] + self._lengths_primers[0] - 1]
+        primer = seq[seq_length.left:seq_length.left + self._lengths_primers.left - 1]
         self._get_first_primer_gc_count(primer)
 
         # Brute force (Linear search)
-        for ind in range(seq_length[0], seq_length[1] - self._lengths_primers[1]):
-            for primer_length in range(self._lengths_primers[0], self._lengths_primers[1] + 1):
+        for idx in range(seq_length.left, seq_length.right - self._lengths_primers.right):
+            for primer_length in range(self._lengths_primers.left, self._lengths_primers.right + 1):
 
                 # Get last nucleotide in primer
-                nucl = seq[ind + primer_length - 1]
+                nucl = seq[idx + primer_length - 1]
 
                 # Checking %GC and Tm primer conditions
-                GC, Tm = self._check_and_get_primer_params(nucl, primer_length)
+                params = self._check_and_get_primer_params(nucl, primer_length)
 
                 # If conditions suitable,
                 # we get primers and checking their homodimers
-                if GC and Tm:
+                if params:
+                    GC, Tm = params
+                    end_idx = idx + primer_length
 
                     # Get primer on main sequence
-                    primer = seq[ind:ind + primer_length]
+                    primer = seq[idx:end_idx]
 
                     # Check primer on homodimer
                     if not Dimers.check_homodimer(primer):
@@ -67,15 +68,14 @@ class PrimerFinder(Thermodynamics):
                             GC=GC,
                             Tm=Tm,
                             seq=primer,
-                            end_idx=ind + primer_length,
+                            end_idx=idx + primer_length,
                             length=primer_length
                         )
 
                         self._primers.append(cur_primer)
 
                     # Get primer on complementary sequence
-                    compl_primer = complementary_seq[ind:ind +
-                                                     primer_length][::-1]
+                    compl_primer = complementary_seq[idx:end_idx][::-1]
 
                     # Check primer on homodimer
                     if not Dimers.check_homodimer(compl_primer):
@@ -84,14 +84,14 @@ class PrimerFinder(Thermodynamics):
                                 GC=GC,
                                 Tm=Tm,
                                 seq=compl_primer,
-                                end_idx=ind + primer_length,
+                                end_idx=idx + primer_length,
                                 length=primer_length
                             )
 
                         self._compl_primers.append(cur_primer)
 
             # Check first and last nucleotides for calculation dynamic %GC
-            self._check_gc(seq[ind], seq[ind + self._lengths_primers[0] - 1])
+            self._check_gc(seq[idx], seq[idx + self._lengths_primers.left - 1])
 
             # TODO: comment
             cur_primer = None

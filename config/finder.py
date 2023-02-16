@@ -1,7 +1,7 @@
 from .base import IntRange, FloatRange
 
 
-SEARCH_RANGE = IntRange(0, 0)
+SEARCH_RANGE = IntRange(0, -1)
 
 # Na+ concentration in reaction
 NA_PLUS = 0.05
@@ -19,4 +19,4 @@ TM_RANGE = FloatRange(55, 60)
 GC_RANGE = FloatRange(45, 55)
 
 # Length of primer range
-PRIMERS_LENGTH_RANGE = (24, 25)
+PRIMERS_LENGTH_RANGE = IntRange(24, 25)

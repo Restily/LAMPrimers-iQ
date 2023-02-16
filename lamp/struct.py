@@ -26,6 +26,7 @@ class PrimersSet:
     
     def remove_last(self) -> None:
         self.primers.pop()
+        self.__cur_idx -= 1
 
     def first(self) -> Primer:
         return self.primers[0]
@@ -44,4 +45,6 @@ class PrimersSet:
         self.__cur_idx += 1
 
         return primer
-        
+    
+    def __len__(self) -> int:
+        return len(self.primers)

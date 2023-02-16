@@ -8,7 +8,7 @@ from gui.ui_py.ui import Ui_MainWindow
 from gui.ui_py.results import Ui_Results
 
 from config.finder import *
-from config.sorting import *
+from config.design import *
 from lamp import LAMP
 
 from gui.utils import *

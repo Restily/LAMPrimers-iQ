@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from config.base import IntRange
-from config.sorting import *
+from config.design import *
 
 
 @dataclass
@@ -11,7 +11,7 @@ class Step:
     distance: IntRange
     next_idx: int
     main: bool
-
+    
 
 class StepGenerator:
 
@@ -29,7 +29,8 @@ class StepGenerator:
         return self.__steps[self.__cur_step]
 
     def previous(self) -> Step:
-        return self.__steps[self.__cur_step - 1]
+        idx = min(self.__cur_step - 1, 0)
+        return self.__steps[idx]
 
     def add_step(self, step: Step) -> None:
         self.__steps.append(step)
@@ -47,9 +48,10 @@ class StepGenerator:
         next_idxs = [0, 1, 0, 2, 1, 2]
         mains = [True, True, False, True, False, False]
 
-        for idx, in range(len(distances)):
+        for idx in range(len(distances)):
             generator.add_step(Step(
                 idx=idx, 
+                primer_idx=next_idxs[idx],
                 distance=distances[idx], 
                 next_idx=next_idxs[idx],
                 main=mains[idx]

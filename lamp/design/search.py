@@ -3,7 +3,7 @@ primers = [primer, [%GC, Tm, ind, primer_length]]
 
 primer_set = [F3, F2, F1c, B1c, B2, B3]
 """
-from config.sorting import *
+from config.design import *
 from .utils import StepGenerator
 from lamp.struct import Primer, PrimersSet
 
@@ -11,7 +11,7 @@ from lamp.thermodynamics.dimers import Dimers
 from lamp.thermodynamics.thermodynamics import Temperature
 
 
-class Sorting:
+class Design:
 
     @classmethod
     def _check_amplicon_length(cls, first_primer: Primer,
@@ -55,12 +55,16 @@ class Sorting:
         # Flag if current primer is last
         last_primer_flag = len(primers) == 5
 
+        # print(primers.first(), cur_primer)
+
         # Check amplicon length range
         if not cls._check_amplicon_length(primers.first(), cur_primer, last_primer_flag):
             return 0
 
         last_primer = primers.last()
         primers_distance = cur_primer.end_idx - cur_primer.length - last_primer.end_idx
+
+        # print(primers_distance)
 
         # Check max primers distance
         if primers_distance > distance.right:
@@ -94,6 +98,7 @@ class Sorting:
 
         :return: sets of primers
         """
+        # Generate steps for design primers
         steps_generator = StepGenerator.build()
 
         # Sets of primers
@@ -103,52 +108,6 @@ class Sorting:
         len_compl_primers = len(compl_primers)
         len_main_primers = len(main_primers)
 
-        while True:
-            step = steps_generator.current()
-
-            if step.main:
-                if step.next_idx >= len_main_primers:
-                    break
-            else:
-                if step.next_idx >= len_compl_primers:
-                    break
-
-            if step.idx == 0:
-                primers = PrimersSet()
-                primers.append(main_primers[step.idx])
-
-                steps_generator.iter_next()
-                continue
-
-            primer_idx = max(
-                steps_generator.previous().primer_idx + 1,
-                step.next_idx
-            )
-
-            if step.main:
-                cur_primer = main_primers[primer_idx]
-            else:
-                cur_primer = compl_primers[primer_idx]
-
-            check_primer = cls._check_undesigned_primers(primers,
-                                                         cur_primer,
-                                                         step.distance)
-
-            if check_primer == 0:
-                steps_generator.iter_back()
-                primers.remove_last()
-                continue
-            elif check_primer == 1:
-                primers.append(cur_primer)
-
-                if steps_generator.check_last():
-                    result.append(primers)
-                    steps_generator.reset()
-                else:
-                    steps_generator.iter_next()
-            elif check_primer == 2:
-                step.next_idx = primer_idx
-
-            step.primer_idx += 1
+        # Need write code
 
         return result

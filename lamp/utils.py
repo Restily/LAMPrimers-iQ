@@ -1,7 +1,7 @@
 from Bio import Seq
 
 
-def get_complementary_seq(self, seq: Seq.Seq) -> str:
+def get_complementary_seq(seq: Seq.Seq) -> str:
     """
     Building a complementary DNA
     

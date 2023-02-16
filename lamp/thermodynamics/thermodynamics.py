@@ -157,13 +157,13 @@ class Thermodynamics(Temperature, GC):
         primer_GC = self._calc_gc(nucl, primer_length)
 
         # Check, if primer temperature is in config %GC range
-        if primer_GC >= self._GC_RANGE[0] and primer_GC <= self._GC_RANGE[1]:
+        if primer_GC >= self._GC_RANGE.left and primer_GC <= self._GC_RANGE.right:
 
             # Calculation current primer temperature
             primer_Tm = self.calc_tm(primer_length, primer_GC)  
 
             # Check, if primer temperature is in config Tm range
-            if primer_Tm >= self._TM_RANGE[0] and primer_Tm <= self._TM_RANGE[1]:
+            if primer_Tm >= self._TM_RANGE.left and primer_Tm <= self._TM_RANGE.right:
                 return [primer_GC, primer_Tm]
 
         return False
