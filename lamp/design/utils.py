@@ -7,7 +7,6 @@ from config.design import *
 @dataclass
 class Step:
     idx: int
-    primer_idx: int
     distance: IntRange
     next_idx: int
     main: bool
@@ -51,7 +50,6 @@ class StepGenerator:
         for idx in range(len(distances)):
             generator.add_step(Step(
                 idx=idx, 
-                primer_idx=next_idxs[idx],
                 distance=distances[idx], 
                 next_idx=next_idxs[idx],
                 main=mains[idx]

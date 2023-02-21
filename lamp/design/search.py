@@ -4,8 +4,8 @@ primers = [primer, [%GC, Tm, ind, primer_length]]
 primer_set = [F3, F2, F1c, B1c, B2, B3]
 """
 from config.design import *
-from .utils import StepGenerator
 from lamp.struct import Primer, PrimersSet
+from .utils import StepGenerator
 
 from lamp.thermodynamics.dimers import Dimers
 from lamp.thermodynamics.thermodynamics import Temperature
@@ -27,9 +27,8 @@ class Design:
         amplicon_length = cur_primer.end_idx - \
             first_primer.end_idx + first_primer.length
 
-        if last_primer_flag:
-            if amplicon_length < MIN_LENGTH_AMPLICON:
-                return False
+        if last_primer_flag and amplicon_length < MIN_LENGTH_AMPLICON:
+            return False
 
         if amplicon_length > MAX_LENGTH_AMPLICON:
             return False
@@ -109,5 +108,4 @@ class Design:
         len_main_primers = len(main_primers)
 
         # Need write code
-
         return result
