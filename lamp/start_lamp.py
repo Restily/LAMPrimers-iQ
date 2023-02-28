@@ -7,6 +7,7 @@ from design.search_primers import Design
 from lamp.dimers import Dimers
 from lamp.thermodynamics import Thermodynamics
 from lamp.config import LAMPConfig
+from utils.history import History
 
 
 class LAMP(Thermodynamics):
@@ -137,6 +138,8 @@ class LAMP(Thermodynamics):
 
         # Sort primer sets
         sets_primers = self.sort_primer_sets(sets_primers)
+
+        History.write_logs(sets_primers)
 
         for primer_set in sets_primers:
             print(primer_set, design.design_loop_primers(primer_set,
