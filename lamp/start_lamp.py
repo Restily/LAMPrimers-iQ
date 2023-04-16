@@ -1,102 +1,88 @@
-"""
-Main file for design primers
-"""
+from ctypes import *
+
 from Bio import Seq, SeqRecord
 
-from design.search_primers import Design
-from lamp.dimers import Dimers
-from lamp.thermodynamics import Thermodynamics
-from lamp.config import LAMPConfig
+from .config import LAMPConfig, DesignConfig
 
 
-class LAMP(Thermodynamics):
-    """ 
-    Class for design primers for LAMP
-    
-    Methods:
-    >>> start_design_primers (main function): start design primers 
-    >>> get_complementary_seq: Building a complementary DNA
-    """
+class Sets(Structure):
+    _fields_ = [
+        ("stringSize", c_int),
+        ("setsString", c_char_p)
+    ]
 
-    def __init__(self):
-        Thermodynamics.__init__(self)
 
-        # Good primers
-        self._primers = []
-        self._compl_primers = []
+class LAMP:
 
-        # Range of primers lengths
-        self._lengths_primers = LAMPConfig.PRIMERS_LENGTH_RANGE
+    @classmethod
+    def parse_results(cls, results: str) -> list:
+        lines = results.split('\n')
 
-    def _get_and_check_primers(self, seq: str, complementary_seq: str, seq_length: list[int]):
-        """
-        Private method 
+        result = []
+        set_primers = []
+        for line in lines:
+            if not line:
+                continue
+
+            if 'set' in line:
+                if set_primers != []:
+                    result.append(set_primers)
+                set_primers = []
+            else:
+                _, primer, idx, _, primer_length, GC, Tm = line.split()
+                res = [primer, [
+                    round(float(GC), 2),
+                    round(float(Tm), 2),
+                    int(idx),
+                    int(primer_length)
+                ]]
+
+                set_primers.append(res)
         
-        Gets primer from genome
+        result.append(set_primers)
+        return result
 
-        :param seq: sequence
-        :param complementary_seq: complementary sequence
-        :param seq_length: indices start/end searching
-        """
+    @classmethod
+    def get_config_params(cls) -> list:
+        DISTANCE_RANGE = [
+            *DesignConfig.F3_F2,
+            *DesignConfig.F2_F1C,
+            *DesignConfig.F1C_B1C,
+            *DesignConfig.B2_B1C,
+            *DesignConfig.B3_B2,
+        ]
 
-        # Work with first primer
-        primer = seq[seq_length[0]:seq_length[0] +
-                     self._lengths_primers[0] - 1]
-        self._get_first_primer_gc_count(primer)
-
-        # Brute force (Linear search)
-        for ind in range(seq_length[0], seq_length[1] - self._lengths_primers[1]):
-            for primer_length in range(self._lengths_primers[0], self._lengths_primers[1] + 1):
-
-                # Get last nucleotide in primer
-                nucl = seq[ind + primer_length - 1]
-
-                # Checking %GC and Tm primer conditions
-                self._primer_params = self._check_and_get_primer_params(
-                    nucl, primer_length)
-
-                # If conditions suitable,
-                # we get primers and checking their homodimers
-                if self._primer_params:
-
-                    # Get primer on main sequence
-                    primer = seq[ind:ind + primer_length]
-
-                    # Check primer on homodimer
-                    if not Dimers.check_homodimer(primer):
-                        # Add params
-                        self._primer_params.extend([ind + 1, primer_length])
-
-                        self._primers.append([primer, self._primer_params])
-
-                    # Get primer on complementary sequence
-                    compl_primer = complementary_seq[ind:ind +
-                                                     primer_length][::-1]
-
-                    # Check primer on homodimer
-                    if not Dimers.check_homodimer(compl_primer):
-                        if len(self._primer_params) != 4:
-                            self._primer_params.extend(
-                                [ind + 1, primer_length])
-
-                        self._compl_primers.append(
-                            [compl_primer, self._primer_params])
-
-            # Check first and last nucleotides for calculation dynamic %GC
-            self._check_gc(seq[ind], seq[ind + self._lengths_primers[0] - 1])
-
-    def get_complementary_seq(self, seq: Seq.Seq) -> str:
-        """
-        Building a complementary DNA
+        params = [
+            c_uint8(LAMPConfig.PRIMERS_LENGTH_RANGE[0]),
+            c_uint8(LAMPConfig.PRIMERS_LENGTH_RANGE[1]),
+            c_float(LAMPConfig.NA_PLUS),
+            (c_float * len(LAMPConfig.TM_RANGE))(*LAMPConfig.TM_RANGE),
+            (c_float * len(LAMPConfig.GC_RANGE))(*LAMPConfig.GC_RANGE),
+            c_uint8(DesignConfig.MAX_DIFFERENCE_LENGTHS_PRIMERS),
+            c_uint8(LAMPConfig.TM_MAX_DIFFERENCE),
+            (c_int * len(DesignConfig.AMPLICON_RANGE))(*DesignConfig.AMPLICON_RANGE),
+            (c_int * len(DISTANCE_RANGE))(*DISTANCE_RANGE)
+        ]
         
-        :param seq: DNA sequence (Seq.Seq from BioPython)
-        
-        :return: complementary DNA sequence (str)
-        """
-        return str(seq.complement())
+        return params
 
-    # seq_length: list[int, str]) -> list:
-    def start_design_primers(self, record: SeqRecord) -> list:
+    @classmethod
+    def config_dll(cls) -> CDLL:
+        lib = CDLL('./LAMP.dll')
+
+        lib.lamp.argtypes = (
+            POINTER(c_char), c_uint32, c_uint8,
+            c_uint8, c_float, POINTER(c_float),
+            POINTER(c_float), c_uint8, c_uint8,
+            POINTER(c_int), POINTER(c_int)
+        )
+
+        lib.lamp.restype = Sets
+
+        return lib
+
+    @classmethod
+    def start_design_primers(cls, record: SeqRecord) -> list:
         """
         Design primers (main function)
 
@@ -114,34 +100,19 @@ class LAMP(Thermodynamics):
         seq_length = [1, 'all']
 
         # Genome sequence reading
-        seq = str(record.seq)
+        seq = str(record.seq).encode('utf-8')
+        seq_size = c_uint32(len(seq))
 
         # Indexes of sequence ends for search
         seq_length = [seq_length[0] - 1,
                       len(seq) if seq_length[1] == 'all' else int(seq_length[1])]
-        # Исправить индексы
+        
+        lib = cls.config_dll()
 
-        # Get complementary sequence
-        complementary_seq = self.get_complementary_seq(record.seq)
+        config_params = cls.get_config_params()
+        params = [seq, seq_size] + config_params
 
-        # Get best primers from genom
-        self._get_and_check_primers(seq, complementary_seq, seq_length)
+        lib_results = lib.lamp(*params)
+        results = lib_results.setsString[:lib_results.stringSize].decode('utf-8')
 
-        # Create design class for primer sets
-        design = Design()
-
-        print(len(self._primers))
-
-        # Get primer sets
-        sets_primers = design.search_sets(self._primers, self._compl_primers)
-
-        # Sort primer sets
-        sets_primers = self.sort_primer_sets(sets_primers)
-
-        for primer_set in sets_primers:
-            print(primer_set, design.design_loop_primers(primer_set,
-                                                         self._primers,
-                                                         self._compl_primers), '\n')
-
-        # Return primer sets
-        return sets_primers
+        return cls.parse_results(results)

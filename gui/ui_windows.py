@@ -7,8 +7,7 @@ from gui.ui_py.params import Ui_Params
 from gui.ui_py.ui import Ui_MainWindow
 from gui.ui_py.results import Ui_Results
 
-from design.config import DesignConfig
-from lamp.config import LAMPConfig
+from lamp.config import DesignConfig, LAMPConfig
 from lamp.start_lamp import LAMP
 
 from gui.utils import *
@@ -89,20 +88,20 @@ class ParamsWindow(QtWidgets.QWidget):
         self.params_ui.amplicon_spin_2.setMaximum(500)
 
         self.params_ui.amplicon_spin_1.setValue(
-            DesignConfig.MIN_LENGTH_AMPLICON
+            DesignConfig.AMPLICON_RANGE[0]
         )
         self.params_ui.amplicon_spin_2.setValue(
-            DesignConfig.MAX_LENGTH_AMPLICON
+            DesignConfig.AMPLICON_RANGE[1]
         )
         self.params_ui.delta_length_spin.setValue(
-            DesignConfig.MAX_DIFFRENCE_LENGTHS_PRIMERS
+            DesignConfig.MAX_DIFFERENCE_LENGTHS_PRIMERS
         )
 
         self.params_ui.na_plus_spin.setValue(
             LAMPConfig.NA_PLUS
         )
         self.params_ui.delta_tm_spin.setValue(
-            LAMPConfig.TM_MIN_VALUE
+            LAMPConfig.TM_MAX_DIFFERENCE
         )
 
 
@@ -132,12 +131,12 @@ class ParamsWindow(QtWidgets.QWidget):
             self.params_ui.b3_b2_spin_2.value()
         ]
 
-        DesignConfig.MIN_LENGTH_AMPLICON = self.params_ui.amplicon_spin_1.value()
-        DesignConfig.MAX_LENGTH_AMPLICON = self.params_ui.amplicon_spin_2.value()
-        DesignConfig.MAX_DIFFRENCE_LENGTHS_PRIMERS = self.params_ui.delta_length_spin.value()
+        DesignConfig.AMPLICON_RANGE[0] = self.params_ui.amplicon_spin_1.value()
+        DesignConfig.AMPLICON_RANGE[1] = self.params_ui.amplicon_spin_2.value()
+        DesignConfig.MAX_DIFFERENCE_LENGTHS_PRIMERS = self.params_ui.delta_length_spin.value()
 
         LAMPConfig.NA_PLUS = self.params_ui.na_plus_spin.value()
-        LAMPConfig.TM_MIN_VALUE = self.params_ui.delta_tm_spin.value()
+        LAMPConfig.TM_MAX_DIFFERENCE = self.params_ui.delta_tm_spin.value()
 
         self.close()
 
@@ -520,22 +519,3 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.paste_field.textChanged.connect(self.check_sequence_length)
 
-
-# class LoadingThread(QtCore.QThread):
-
-#     progress_update = QtCore.pyqtSignal(int)
-
-#     def __init__(self):
-#         QtCore.QThread.__init__(self)
-#         self.current_class = None
-#         self.loading_progress = 0
-
-
-#     def __del__(self):
-#         self.wait()
-    
-
-#     def run(self) -> None:
-#         while True:
-#             self.progress_update.emit()
-#             time.sleep(1)
