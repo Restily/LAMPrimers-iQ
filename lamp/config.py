@@ -48,6 +48,3 @@ class LAMPConfig:
 
     # Length of primer range
     PRIMERS_LENGTH_RANGE = [24, 25]
-
-
-    
