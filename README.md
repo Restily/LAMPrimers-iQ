@@ -4,4 +4,15 @@ A new program is called LAMPrimers iQ and it intended for primers selection for 
 
 ## License
 
-MIT license ([LICENSE-MIT](LICENSE) or http://opensource.org/licenses/MIT)
+MIT license ([LICENSE-MIT](LICENSE) or http://opensource.org/licenses/MIT)![telegram](https://github.com/Restily/LAMPrimers-iQ/assets/37340177/328a66ab-2e32-4269-8136-53564fa9246e)
+
+
+## Installation
+
+1) Install Python and pip
+2) After install, open your command prompt (cmd) and enter command: ```pip install pyqt6 biopython```
+3) Clone repository with git
+4) Open repo in console and enter command: ```python main.py```
+
+### For any questions:
+#### - Telegram: @Restily
