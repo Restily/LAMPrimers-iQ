@@ -16,10 +16,13 @@ class LAMP:
 
     @classmethod
     def parse_results(cls, results: str) -> list:
-        lines = results.split('\n')
-
         result = []
         set_primers = []
+
+        if not results:
+            return result
+
+        lines = results.split('\n')
         for line in lines:
             if not line:
                 continue
