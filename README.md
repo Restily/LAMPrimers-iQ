@@ -17,3 +17,4 @@ MIT license ([LICENSE-MIT](LICENSE) or http://opensource.org/licenses/MIT)![tele
 
 ### For any questions:
 #### - Telegram: @Restily
+#### - LinkedIn: [Timur Davletkulov](https://www.linkedin.com/in/timur-davletkulov-73a210284/)
