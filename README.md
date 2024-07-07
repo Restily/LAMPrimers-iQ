@@ -7,11 +7,10 @@ A new program is called LAMPrimers iQ and it intended for primers selection for 
 MIT license ([LICENSE-MIT](LICENSE) or http://opensource.org/licenses/MIT)![telegram](https://github.com/Restily/LAMPrimers-iQ/assets/37340177/328a66ab-2e32-4269-8136-53564fa9246e)
 
 
-## Installation
+## Installation (Temporarily available for Windows only)
 
-1) Install Python and pip
+1) Install Python 3.10 and pip
 2) After install, open your command prompt (cmd) and enter command: ```pip install pyqt6 biopython openpyxl```
-3) If you use Ubuntu, open terminal and enter command: ```sudo apt install libegl1-mesa:i386 libegl1:i386```
 4) Clone repository with git
 5) Open repo in console and enter command: ```python main.py```
 
