@@ -281,6 +281,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def init_UI(self):
         self.setWindowTitle('Design primers for LAMP') 
         self.setWindowIcon(QtGui.QIcon('exchanging.png'))
+        
+        # Set minimum window size to prevent text cutoff
+        self.setMinimumSize(QtCore.QSize(900, 650))
+        self.resize(900, 650)
 
         self.ui.results_button.setDisabled(True)
         self.ui.loading.setVisible(False)
